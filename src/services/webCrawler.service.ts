@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { load } from 'cheerio';
+import WebCrawlerModel from '../models/webCrawler.model';
 
 const getWebUrls = async (baseUrl: string): Promise<string[]> => {
     return new Promise(async (resolve, reject) => {
@@ -15,11 +14,9 @@ const getWebUrls = async (baseUrl: string): Promise<string[]> => {
             while (pendingURLs.length > 0 && visitedURLs.length < MAX_PAGE) {
                 const url = pendingURLs.pop()!;
 
-                const { data: pageHTML } = await axios.get(url);
+                const cheerioAPI = await WebCrawlerModel.getCheerioAPI(url);
 
                 visitedURLs.push(url);
-
-                const cheerioAPI = load(pageHTML);
 
                 cheerioAPI('a:not(:has(img))').each((_, element) => {
                     const paginationURL = cheerioAPI(element).attr('href');
