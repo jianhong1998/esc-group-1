@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "install:all": "npm i && npm:install:client",
+        "install:all": "npm i && npm run install:client",
         "install:client": "cd react && npm i",
         "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
         "dev:server": "NODE_ENV=dev PORT=3001 nodemon --exec ts-node src/app.ts",
