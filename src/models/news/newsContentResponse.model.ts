@@ -1,4 +1,4 @@
 export default interface NewsContentResponse {
-    result: string;
+    result: string[];
     message?: string;
 }
