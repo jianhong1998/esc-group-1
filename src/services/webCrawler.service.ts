@@ -88,13 +88,17 @@ const getMultipleNewsContent = async (
 ): Promise<string[]> => {
     return new Promise(async (resolve, reject) => {
         try {
-            const resultContent = [] as string[];
+            const resultContents = [] as string[];
 
             for (let baseURL of baseURLs) {
-                resultContent.push(await getNewsContent(baseURL));
+                const content = await getNewsContent(baseURL);
+
+                if (content.length > 0) {
+                    resultContents.push(content);
+                }
             }
 
-            resolve(resultContent);
+            resolve(resultContents);
         } catch (error) {
             const message =
                 error instanceof Error ? error.message : String(error);
