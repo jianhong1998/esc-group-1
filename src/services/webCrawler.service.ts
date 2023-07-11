@@ -1,3 +1,4 @@
+import { Element } from 'cheerio';
 import WebCrawlerModel from '../models/webCrawler.model';
 
 const getWebUrls = async (baseUrl: string): Promise<string[]> => {
@@ -48,4 +49,38 @@ const getWebUrls = async (baseUrl: string): Promise<string[]> => {
     });
 };
 
-export { getWebUrls };
+const getNewsContent = async (baseURL: string): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const querySelector = '.content-wrapper .text .text-long p';
+
+            const cheerioAPI = await WebCrawlerModel.getCheerioAPI(baseURL);
+
+            let resultText: string = '';
+
+            cheerioAPI(querySelector).each((index, element) => {
+                const nodes = element.childNodes;
+
+                nodes.forEach((node) => {
+                    if (
+                        'data' in node &&
+                        typeof node.data === 'string' &&
+                        node.data !== null &&
+                        node.data.trim().length > 0
+                    ) {
+                        resultText += node.data.trim();
+                    }
+                });
+            });
+
+            resolve(resultText);
+        } catch (error) {
+            const errorMessage =
+                error instanceof Error ? error.message : String(error);
+
+            reject(errorMessage);
+        }
+    });
+};
+
+export { getWebUrls, getNewsContent };
