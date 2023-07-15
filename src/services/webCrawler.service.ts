@@ -1,25 +1,23 @@
-import axios from 'axios';
-import { load } from 'cheerio';
+import { Element } from 'cheerio';
+import WebCrawlerModel from '../models/webCrawler.model';
 
-const getWebUrls = async (baseUrl: string): Promise<string[]> => {
+const getWebUrls = async (baseURL: string): Promise<string[]> => {
     return new Promise(async (resolve, reject) => {
         const MAX_PAGE = 20;
 
         try {
-            const pendingURLs: string[] = [baseUrl];
+            const pendingURLs: string[] = [baseURL];
             const visitedURLs: string[] = [];
             const resultURLs: string[] = [];
 
-            const rootURL = `https://${baseUrl.split('/')[2]}`;
+            const rootURL = `https://${baseURL.split('/')[2]}`;
 
             while (pendingURLs.length > 0 && visitedURLs.length < MAX_PAGE) {
                 const url = pendingURLs.pop()!;
 
-                const { data: pageHTML } = await axios.get(url);
+                const cheerioAPI = await WebCrawlerModel.getCheerioAPI(url);
 
                 visitedURLs.push(url);
-
-                const cheerioAPI = load(pageHTML);
 
                 cheerioAPI('a:not(:has(img))').each((_, element) => {
                     const paginationURL = cheerioAPI(element).attr('href');
@@ -51,4 +49,63 @@ const getWebUrls = async (baseUrl: string): Promise<string[]> => {
     });
 };
 
-export { getWebUrls };
+const getNewsContent = async (baseURL: string): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const querySelector = '.content-wrapper .text .text-long p';
+
+            const cheerioAPI = await WebCrawlerModel.getCheerioAPI(baseURL);
+
+            let resultText: string = '';
+
+            cheerioAPI(querySelector).each((index, element) => {
+                const nodes = element.childNodes;
+
+                nodes.forEach((node) => {
+                    if (
+                        'data' in node &&
+                        typeof node.data === 'string' &&
+                        node.data !== null &&
+                        node.data.trim().length > 0
+                    ) {
+                        resultText += node.data.trim();
+                    }
+                });
+            });
+
+            resolve(resultText);
+        } catch (error) {
+            const errorMessage =
+                error instanceof Error ? error.message : String(error);
+
+            reject(errorMessage);
+        }
+    });
+};
+
+const getMultipleNewsContent = async (
+    baseURLs: string[]
+): Promise<string[]> => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const resultContents = [] as string[];
+
+            for (let baseURL of baseURLs) {
+                const content = await getNewsContent(baseURL);
+
+                if (content.length > 0) {
+                    resultContents.push(content);
+                }
+            }
+
+            resolve(resultContents);
+        } catch (error) {
+            const message =
+                error instanceof Error ? error.message : String(error);
+
+            reject(message);
+        }
+    });
+};
+
+export { getWebUrls, getNewsContent, getMultipleNewsContent };
