@@ -1,10 +1,10 @@
 import { Element } from 'cheerio';
 import WebCrawlerModel from '../models/webCrawler.model';
+import { MAX_PAGE } from '../constants/webCrawler';
+import NewsContent from '../models/news/newsContent.model';
 
 const getWebUrls = async (baseURL: string): Promise<string[]> => {
     return new Promise(async (resolve, reject) => {
-        const MAX_PAGE = 20;
-
         try {
             const pendingURLs: string[] = [baseURL];
             const visitedURLs: string[] = [];
@@ -12,7 +12,7 @@ const getWebUrls = async (baseURL: string): Promise<string[]> => {
 
             const rootURL = `https://${baseURL.split('/')[2]}`;
 
-            while (pendingURLs.length > 0 && visitedURLs.length < MAX_PAGE) {
+            while (pendingURLs.length > 0 && resultURLs.length < MAX_PAGE) {
                 const url = pendingURLs.pop()!;
 
                 const cheerioAPI = await WebCrawlerModel.getCheerioAPI(url);
@@ -20,6 +20,10 @@ const getWebUrls = async (baseURL: string): Promise<string[]> => {
                 visitedURLs.push(url);
 
                 cheerioAPI('a:not(:has(img))').each((_, element) => {
+                    if (resultURLs.length >= MAX_PAGE) {
+                        return;
+                    }
+
                     const paginationURL = cheerioAPI(element).attr('href');
 
                     const splitedPaginationURL =
@@ -49,7 +53,7 @@ const getWebUrls = async (baseURL: string): Promise<string[]> => {
     });
 };
 
-const getNewsContent = async (baseURL: string): Promise<string> => {
+const getNewsContent = async (baseURL: string): Promise<NewsContent> => {
     return new Promise(async (resolve, reject) => {
         try {
             const querySelector = '.content-wrapper .text .text-long p';
@@ -73,7 +77,7 @@ const getNewsContent = async (baseURL: string): Promise<string> => {
                 });
             });
 
-            resolve(resultText);
+            resolve({ content: resultText, url: baseURL });
         } catch (error) {
             const errorMessage =
                 error instanceof Error ? error.message : String(error);
@@ -85,16 +89,16 @@ const getNewsContent = async (baseURL: string): Promise<string> => {
 
 const getMultipleNewsContent = async (
     baseURLs: string[]
-): Promise<string[]> => {
+): Promise<NewsContent[]> => {
     return new Promise(async (resolve, reject) => {
         try {
-            const resultContents = [] as string[];
+            const resultContents = [] as NewsContent[];
 
             for (let baseURL of baseURLs) {
-                const content = await getNewsContent(baseURL);
+                const newsContent = await getNewsContent(baseURL);
 
-                if (content.length > 0) {
-                    resultContents.push(content);
+                if (newsContent.content.length > 0) {
+                    resultContents.push(newsContent);
                 }
             }
 

@@ -7,6 +7,7 @@ import {
 import NewsContentResponse from '../models/news/newsContentResponse.model';
 import NewsUrlsResponse from '../models/news/newsUrlResponse.model';
 import axios from 'axios';
+import { MAX_PAGE } from '../constants/webCrawler';
 
 const getAllNewsURLsHandler: RequestHandler<
     {},
@@ -15,14 +16,13 @@ const getAllNewsURLsHandler: RequestHandler<
     { u: string }
 > = async (req, res) => {
     try {
-        const MIN_NEWS = 100;
         const { u: url } = req.query;
 
         const results = await getWebUrls(url);
 
         let index = 0;
 
-        while (results.length < MIN_NEWS) {
+        while (results.length < MAX_PAGE) {
             results.push(...(await getWebUrls(results[index])));
 
             index++;

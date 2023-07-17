@@ -1,4 +1,6 @@
+import NewsContent from './newsContent.model';
+
 export default interface NewsContentResponse {
-    result: string[];
+    result: NewsContent[];
     message?: string;
 }
