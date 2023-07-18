@@ -8,13 +8,12 @@ import {
     getMultipleNewsContent,
     getWebUrls,
 } from '../services/webCrawler.service';
-import SummarizeMultipleNewsResponse, {
-    SummarizedNews,
-} from '../models/summarise/summarizeResponse.model';
+import { SummarizedNews } from '../models/summarise/summarizeResponse.model';
+import API_Response from '../models/apiResponse';
 
 const summarizeController: RequestHandler<
     {},
-    { response?: AiResponse; errorMessage: string; success: boolean },
+    API_Response<AiResponse>,
     ChatRequest
 > = async (req, res) => {
     try {
@@ -42,7 +41,7 @@ const summarizeController: RequestHandler<
 
 const summarizeMultipleNewsController: RequestHandler<
     {},
-    SummarizeMultipleNewsResponse,
+    API_Response<SummarizedNews[]>,
     undefined,
     SummarizeMultipleNewsRequest
 > = async (req, res) => {
@@ -76,7 +75,7 @@ const summarizeMultipleNewsController: RequestHandler<
 
         return res.status(200).send({
             response: results,
-            message: '',
+            errorMessage: '',
             success: true,
         });
     } catch (error) {
@@ -84,7 +83,7 @@ const summarizeMultipleNewsController: RequestHandler<
 
         res.status(500).send({
             response: results,
-            message,
+            errorMessage: message,
             success: false,
         });
     }
