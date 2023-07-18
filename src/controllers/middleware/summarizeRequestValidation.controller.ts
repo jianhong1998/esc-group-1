@@ -17,7 +17,7 @@ const summarizeRequestValidationMiddleware =
             });
         }
 
-        const { baseURL: inputURL } = req.body;
+        const { u: inputURL } = req.body;
 
         if (typeof inputURL !== 'string') {
             throw new Error(
@@ -33,7 +33,7 @@ const summarizeRequestValidationMiddleware =
             baseURL = `https://${inputURL}`;
         }
 
-        req.body.baseURL = baseURL;
+        req.body.u = baseURL;
 
         next();
     };

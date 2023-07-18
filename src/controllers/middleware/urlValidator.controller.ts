@@ -13,7 +13,7 @@ const urlValidator =
 
             if (typeof inputURL !== 'string') {
                 throw new Error(
-                    'Must include URL as "u" in request query. For example: "/u=www.sample-web-page.com"'
+                    "Must include URL as 'u' in request query. For example: '/?u=www.sample-web-page.com'"
                 );
             }
 

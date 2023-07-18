@@ -43,14 +43,15 @@ const summarizeController: RequestHandler<
 const summarizeMultipleNewsController: RequestHandler<
     {},
     SummarizeMultipleNewsResponse,
+    undefined,
     SummarizeMultipleNewsRequest
 > = async (req, res) => {
     const results = [] as SummarizedNews[];
 
     try {
-        const { baseURL } = req.body;
+        const { u: inputURL } = req.query;
 
-        const pendingURLs = await getWebUrls(baseURL);
+        const pendingURLs = await getWebUrls(inputURL);
 
         const contents = await getMultipleNewsContent(pendingURLs);
 

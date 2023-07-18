@@ -5,6 +5,7 @@ import {
 } from '../../controllers/summarize.controller';
 import { chatRequestValidationMiddleware } from '../../controllers/middleware/chatRequestValidation.controller';
 import { summarizeRequestValidationMiddleware } from '../../controllers/middleware/summarizeRequestValidation.controller';
+import { urlValidator } from '../../controllers/middleware/urlValidator.controller';
 
 const summarizeRouter = Router();
 
@@ -14,10 +15,7 @@ summarizeRouter.post(
     summarizeController
 );
 
-summarizeRouter.post(
-    '/news',
-    summarizeRequestValidationMiddleware(),
-    summarizeMultipleNewsController
-);
+summarizeRouter.use('/news', urlValidator());
+summarizeRouter.get('/news', summarizeMultipleNewsController);
 
 export default summarizeRouter;
