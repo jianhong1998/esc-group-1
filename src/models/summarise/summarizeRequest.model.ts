@@ -1,5 +1,5 @@
 interface SummarizeMultipleNewsRequest {
-    baseURL: string;
+    u: string;
 }
 
 export { SummarizeMultipleNewsRequest };

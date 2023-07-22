@@ -1,19 +1,15 @@
 import { RequestHandler } from 'express';
+import API_Response from '../../models/apiResponse';
 
 const urlValidator =
-    (): RequestHandler<
-        any,
-        { result: string; message?: string },
-        undefined,
-        { u: string }
-    > =>
+    (): RequestHandler<any, API_Response<string>, undefined, { u: string }> =>
     (req, res, next) => {
         try {
             const { u: inputURL } = req.query;
 
             if (typeof inputURL !== 'string') {
                 throw new Error(
-                    'Must include URL as "u" in request query. For example: "/u=www.sample-web-page.com"'
+                    "Must include URL as 'u' in request query. For example: '/?u=www.sample-web-page.com'"
                 );
             }
 
@@ -32,7 +28,7 @@ const urlValidator =
             const message =
                 error instanceof Error ? error.message : String(error);
 
-            res.status(400).send({ result: '', message });
+            res.status(400).send({ errorMessage: message, success: false });
         }
     };
 
