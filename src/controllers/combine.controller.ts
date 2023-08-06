@@ -6,7 +6,12 @@ import AiBehaviorContent from '../models/openAi/aiBehaviorContent.enum';
 
 const combineOperationHandler: RequestHandler<
     {},
-    API_Response<{ translatedNews: string; fullNews: string; url: string }>,
+    API_Response<{
+        translatedNews: string;
+        fullNews: string;
+        summarisedNews: string;
+        url: string;
+    }>,
     undefined,
     { u: string }
 > = async (req, res) => {
@@ -75,7 +80,12 @@ const combineOperationHandler: RequestHandler<
         const translatedNews = aiResponse.message.content;
 
         res.status(200).send({
-            response: { translatedNews, fullNews, url: inputURL },
+            response: {
+                translatedNews,
+                fullNews,
+                summarisedNews,
+                url: inputURL,
+            },
             errorMessage: '',
             success: true,
         });
