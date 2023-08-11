@@ -2,17 +2,19 @@ import { RequestHandler } from 'express';
 import API_Response from '../models/apiResponse';
 import { generateAiResponse } from '../services/openAi.service';
 import AiBehaviorContent from '../models/openAi/aiBehaviorContent.enum';
+import ChatRequest from '../models/openAi/chatRequest.model';
+import AiResponse from '../models/openAi/response.model';
 
 const translateContentHandler: RequestHandler<
     {},
-    API_Response<string>,
-    { content: string }
+    API_Response<AiResponse>,
+    ChatRequest
 > = async (req, res) => {
     try {
-        const { content } = req.body;
+        const { message } = req.body;
 
         const aiResponse = await generateAiResponse(
-            content,
+            message,
             AiBehaviorContent.TRANSLATE
         );
 
@@ -29,7 +31,7 @@ const translateContentHandler: RequestHandler<
         }
 
         res.status(200).send({
-            response: aiResponse.message.content,
+            response: aiResponse,
             errorMessage: '',
             success: true,
         });

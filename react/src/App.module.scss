@@ -1,0 +1,28 @@
+.flexContainer {
+    display: flex;
+    justify-content: space-around;
+
+    .box {
+        border: none;
+        border-radius: 10px;
+        box-shadow: grey 0 0 1em 0;
+        padding: 1em;
+        width: 300px;
+
+        &.textarea {
+            width: unset;
+        }
+    }
+
+    .buttonContainer {
+        display: flex;
+        justify-content: space-between;
+        margin: 0 0 1em 0;
+    }
+
+    .button {
+        padding: 0.5em 1em;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+}
