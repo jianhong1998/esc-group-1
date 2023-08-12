@@ -1,10 +1,12 @@
-import axios from 'axios';
 import classes from './App.module.scss';
 
+import axios from 'axios';
 import { ChangeEventHandler, FC, MouseEventHandler, useState } from 'react';
 import RequestBody from './models/requests/requestBody.model';
 import SummarizeResponse from './models/responses/summarizeResponse.model';
 import FeatureOption from './models/featureOption.enum';
+import { LoadingButton } from '@mui/lab';
+import { Button } from '@mui/material';
 
 const App: FC = () => {
     const [inputValue, setInputValue] = useState<string>('');
@@ -12,6 +14,7 @@ const App: FC = () => {
     const [feature, setFeature] = useState<FeatureOption>(
         FeatureOption.SUMMARIZE
     );
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const inputOnChangeHandler: ChangeEventHandler<HTMLTextAreaElement> = (
         event
@@ -29,6 +32,7 @@ const App: FC = () => {
         };
 
         setResponse(null);
+        setIsLoading(true);
 
         axios
             .post<SummarizeResponse>(url, reqBody)
@@ -46,10 +50,12 @@ const App: FC = () => {
                 }
 
                 setResponse(response.message.content);
+                setIsLoading(false);
             })
             .catch((error) => {
                 alert(error);
                 console.log(error);
+                setIsLoading(false);
             });
     };
 
@@ -81,25 +87,28 @@ const App: FC = () => {
                                 Translate
                             </option>
                         </select>
-                        <button
+                        <LoadingButton
                             onClick={submitButtonOnClickHandler}
-                            className={classes.button}
+                            loading={isLoading}
+                            variant='outlined'
+                            color='primary'
                         >
                             Submit
-                        </button>
-                        <button
+                        </LoadingButton>
+                        <Button
                             onClick={clearButtonOnClickHandler}
-                            className={classes.button}
+                            variant='outlined'
+                            color='warning'
                         >
                             Clear
-                        </button>
+                        </Button>
                     </div>
                     <div>
                         <textarea
                             placeholder='Please input something you want to summary or translate'
                             onChange={inputOnChangeHandler}
                             value={inputValue}
-                            cols={30}
+                            cols={50}
                             rows={40}
                             className={`${classes.textarea} ${classes.box}`}
                         />
