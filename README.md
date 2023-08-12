@@ -24,7 +24,7 @@ GET Request to `http://localhost:3001/api/news/urls?u=<input_url>`
 
 ### Get news content in the input URL
 
-GET Request to `(http://localhost:3001/api/news/content?u=<input_url>`
+GET Request to `http://localhost:3001/api/news/content?u=<input_url>`
 
 -   Replace `<input_url>` with the CNA news webpage URL, which contains `https://` in front.
 
