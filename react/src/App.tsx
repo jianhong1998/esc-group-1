@@ -119,7 +119,15 @@ const App: FC = () => {
                         response ? '' : classes.emptyBox
                     }`}
                 >
-                    {response || ''}
+                    {response === null ? (
+                        <p></p>
+                    ) : (
+                        response
+                            .split('\n')
+                            .map((value, index) => (
+                                <p key={`p-${index}`}>{value}</p>
+                            ))
+                    )}
                 </div>
             </div>
         </>
